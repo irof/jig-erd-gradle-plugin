@@ -27,7 +27,7 @@ gradlePlugin {
             id = 'com.github.irof.sandbox.jig-erd'
             displayName = 'JIG-ERD'
             description = 'Gradle JIG ERD Plugin'
-            implementationClass = 'com.github.irof.jig.JigErdPlugin'
+            implementationClass = 'com.github.irof.jig.erd.JigErdPlugin'
         }
     }
 }
