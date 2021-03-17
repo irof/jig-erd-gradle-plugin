@@ -1,0 +1,49 @@
+plugins {
+    id 'java-gradle-plugin'
+    id 'maven-publish'
+    id 'com.gradle.plugin-publish' version '0.12.0'
+}
+group = 'com.github.irof.sandbox'
+version = '0.0.1'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'com.github.irof:jig-erd:0.0.5'
+    testImplementation 'junit:junit:4.13'
+}
+
+pluginBundle {
+    website = 'https://github.com/irof/jig-erd-gradle-plugin'
+    vcsUrl = 'https://github.com/irof/jig-erd-gradle-plugin'
+    tags = ['jig', 'erd']
+}
+
+gradlePlugin {
+    plugins {
+        myPlugin { // この名前は設定内で一意であればなんでもいい
+            id = 'com.github.irof.sandbox.jig-erd'
+            displayName = 'JIG-ERD'
+            description = 'Gradle JIG ERD Plugin'
+            implementationClass = 'com.github.irof.jig.JigErdPlugin'
+        }
+    }
+}
+
+// Add a source set and a task for a functional test suite
+def functionalTest = sourceSets.create('functionalTest')
+gradlePlugin.testSourceSets(functionalTest)
+
+configurations[functionalTest.implementationConfigurationName].extendsFrom(configurations.testImplementation)
+
+def functionalTestTask = tasks.register('functionalTest', Test) {
+    testClassesDirs = functionalTest.output.classesDirs
+    classpath = configurations[functionalTest.runtimeClasspathConfigurationName] + functionalTest.output
+}
+
+tasks.check.configure {
+    // Run the functional tests as part of `check`
+    dependsOn(functionalTestTask)
+}
